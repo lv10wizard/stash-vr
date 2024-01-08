@@ -110,6 +110,8 @@ func setSceneFilterCriterion(ctx context.Context, criterionType string, criterio
 		sceneFilter.Play_count = parseIntCriterionInput(criterionValue)
 	case "play_duration":
 		sceneFilter.Play_duration = parseIntCriterionInput(criterionValue)
+	case "framerate":
+		sceneFilter.Framerate = parseIntCriterionInput(criterionValue)
 
 	//bool
 	case "organized":

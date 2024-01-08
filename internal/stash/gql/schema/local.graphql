@@ -2800,6 +2800,8 @@ input SceneFilterType {
     rating100: IntCriterionInput
     "Filter by resolution"
     resolution: ResolutionCriterionInput
+    "Filter by frame rate"
+    framerate: IntCriterionInput
     "Filter by resume time"
     resume_time: IntCriterionInput
     "Filter by StashID"
