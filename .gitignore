@@ -3,3 +3,5 @@
 /.graphqlconfig
 
 /internal/stash/gql/generated.go
+
+*.env
