@@ -36,24 +36,26 @@ func GetStreams(ctx context.Context, fsp gql.StreamsParts, sortResolutionAsc boo
 		}},
 	})
 
-	switch fsp.Files[0].Video_codec {
-	case "h264", "hevc", "h265", "mpeg4":
-		streams = append(streams, Stream{
-			Name:    "transcoding",
-			Sources: getSources(ctx, fsp, "MP4", "Direct stream", sortResolutionAsc),
-		})
-	case "vp8", "vp9":
-		streams = append(streams, Stream{
-			Name:    "transcoding",
-			Sources: getSources(ctx, fsp, "WEBM", "Direct stream", sortResolutionAsc),
-		})
-	default:
-		log.Ctx(ctx).Warn().Str("codec", fsp.Files[0].Video_codec).Str("file ext", filepath.Ext(fsp.Files[0].Path)).Msg("Codec not supported? Selecting transcoding sources.")
-		streams = append(streams, Stream{
-			Name: "transcoding",
-			//transcode unsupported codecs to webm by default - or should we do mp4?
-			Sources: getSources(ctx, fsp, "WEBM", "webm", sortResolutionAsc),
-		})
+	if !config.Get().IsTranscodeDisabled {
+		switch fsp.Files[0].Video_codec {
+		case "h264", "hevc", "h265", "mpeg4":
+			streams = append(streams, Stream{
+				Name:    "transcoding",
+				Sources: getSources(ctx, fsp, "MP4", "Direct stream", sortResolutionAsc),
+			})
+		case "vp8", "vp9":
+			streams = append(streams, Stream{
+				Name:    "transcoding",
+				Sources: getSources(ctx, fsp, "WEBM", "Direct stream", sortResolutionAsc),
+			})
+		default:
+			log.Ctx(ctx).Warn().Str("codec", fsp.Files[0].Video_codec).Str("file ext", filepath.Ext(fsp.Files[0].Path)).Msg("Codec not supported? Selecting transcoding sources.")
+			streams = append(streams, Stream{
+				Name: "transcoding",
+				//transcode unsupported codecs to webm by default - or should we do mp4?
+				Sources: getSources(ctx, fsp, "WEBM", "webm", sortResolutionAsc),
+			})
+		}
 	}
 
 	// stash adds query parameter 'apikey' for direct stream but not for transcoding streams - add it
