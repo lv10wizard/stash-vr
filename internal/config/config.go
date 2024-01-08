@@ -21,6 +21,7 @@ const (
 	envKeyHeatmapHeightPx  = "HEATMAP_HEIGHT_PX"
 	envKeyAllowSyncMarkers = "ALLOW_SYNC_MARKERS"
 	envKeyDisablePlayCount = "DISABLE_PLAY_COUNT"
+	envKeyDisableTranscode = "DISABLE_TRANSCODING"
 	envKeyStimhubUrl       = "STIMHUB_URL"
 )
 
@@ -38,6 +39,7 @@ type Application struct {
 	IsHeatmapDisabled    bool
 	HeatmapHeightPx      int
 	IsPlayCountDisabled  bool
+	IsTranscodeDisabled  bool
 	StimhubUrl           string
 }
 
@@ -83,6 +85,9 @@ func Init() {
 	pflag.Bool(envKeyDisablePlayCount, false, "Disable incrementing Stash play count for scenes")
 	_ = viper.BindPFlag(envKeyDisablePlayCount, pflag.Lookup(envKeyDisablePlayCount))
 
+	pflag.Bool(envKeyDisableTranscode, false, "Disable playback of transcoded Stash streams (only play direct source file)")
+	_ = viper.BindPFlag(envKeyDisableTranscode, pflag.Lookup(envKeyDisableTranscode))
+
 	pflag.String(envKeyStimhubUrl, "", "")
 	_ = viper.BindPFlag(envKeyStimhubUrl, pflag.Lookup(envKeyStimhubUrl))
 
@@ -111,6 +116,7 @@ func Init() {
 	cfg.IsHeatmapDisabled = viper.GetBool(envKeyDisableHeatmap)
 	cfg.HeatmapHeightPx = viper.GetInt(envKeyHeatmapHeightPx)
 	cfg.IsPlayCountDisabled = viper.GetBool(envKeyDisablePlayCount)
+	cfg.IsTranscodeDisabled = viper.GetBool(envKeyDisableTranscode)
 	cfg.StimhubUrl = viper.GetString(envKeyStimhubUrl)
 
 }

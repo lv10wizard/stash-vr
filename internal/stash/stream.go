@@ -26,35 +26,35 @@ type Source struct {
 var rgxResolution = regexp.MustCompile(`\((\d+)p\)`)
 
 func GetStreams(ctx context.Context, fsp gql.StreamsParts, sortResolutionAsc bool) []Stream {
-	streams := make([]Stream, 2)
+	streams := make([]Stream, 0, 2)
 
-	directStream := Stream{
+	streams = append(streams, Stream{
 		Name: "direct",
 		Sources: []Source{{
 			Resolution: fsp.Files[0].Height,
 			Url:        fsp.Paths.Stream,
 		}},
-	}
+	})
 
-	switch fsp.Files[0].Video_codec {
-	case "h264", "hevc", "h265", "mpeg4":
-		streams[0] = Stream{
-			Name:    "transcoding",
-			Sources: getSources(ctx, fsp, "MP4", "Direct stream", sortResolutionAsc),
-		}
-		streams[1] = directStream
-	case "vp8", "vp9":
-		streams[0] = Stream{
-			Name:    "transcoding",
-			Sources: getSources(ctx, fsp, "WEBM", "Direct stream", sortResolutionAsc),
-		}
-		streams[1] = directStream
-	default:
-		log.Ctx(ctx).Warn().Str("codec", fsp.Files[0].Video_codec).Str("file ext", filepath.Ext(fsp.Files[0].Path)).Msg("Codec not supported? Selecting transcoding sources.")
-		streams[0] = Stream{
-			Name: "transcoding",
-			//transcode unsupported codecs to webm by default - or should we do mp4?
-			Sources: getSources(ctx, fsp, "WEBM", "webm", sortResolutionAsc),
+	if !config.Get().IsTranscodeDisabled {
+		switch fsp.Files[0].Video_codec {
+		case "h264", "hevc", "h265", "mpeg4":
+			streams = append(streams, Stream{
+				Name:    "transcoding",
+				Sources: getSources(ctx, fsp, "MP4", "Direct stream", sortResolutionAsc),
+			})
+		case "vp8", "vp9":
+			streams = append(streams, Stream{
+				Name:    "transcoding",
+				Sources: getSources(ctx, fsp, "WEBM", "Direct stream", sortResolutionAsc),
+			})
+		default:
+			log.Ctx(ctx).Warn().Str("codec", fsp.Files[0].Video_codec).Str("file ext", filepath.Ext(fsp.Files[0].Path)).Msg("Codec not supported? Selecting transcoding sources.")
+			streams = append(streams, Stream{
+				Name: "transcoding",
+				//transcode unsupported codecs to webm by default - or should we do mp4?
+				Sources: getSources(ctx, fsp, "WEBM", "webm", sortResolutionAsc),
+			})
 		}
 	}
 

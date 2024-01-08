@@ -83,6 +83,9 @@ Example: Connect to Stash running on localhost:9999 with api key XXX and set Sta
 * `DISABLE_PLAY_COUNT`
   * Default: `false`
   * Disable incrementing Stash play count for scenes. Will otherwise send request to Stash to increment play count when video is played in HereSphere.
+* `DISABLE_TRANSCODING`
+  * Default: `false`
+  * Disable serving transcoded stream urls to the client (only the direct source file stream will be selectable/playable).
 * `FORCE_HTTPS`
   * Default: `false`
   * Force Stash-VR to use HTTPS. Useful as a last resort attempt if you're having issues with Stash-VR behind a reverse proxy.
