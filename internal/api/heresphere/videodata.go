@@ -199,7 +199,7 @@ func set3DFormat(s gql.SceneFullParts, videoData *videoData) {
 }
 
 func setMediaSources(ctx context.Context, s gql.SceneFullParts, videoData *videoData) {
-	for _, stream := range stash.GetStreams(ctx, s.StreamsParts, true) {
+	for _, stream := range stash.GetStreams(ctx, s.StreamsParts, false) {
 		e := media{
 			Name: stream.Name,
 		}
